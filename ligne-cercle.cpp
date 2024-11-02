@@ -6,13 +6,12 @@
 #include <cmath>
 //initialisationde mode graphique
 void init_graph(){
-    char path[] = "C:\\TDM-GCC-32\\lib\\bgi";
+    char path[] = "C:\\MinGW\\lib\\libbgi";
     int gdriver = DETECT, gmode;
     initgraph(&gdriver, &gmode, path);
-
 }
 
-//Tra�age de repere en utilisant l'instruction line
+//TraÃ§age de repere en utilisant l'instruction line
 
 void repere(){
     cleardevice();
@@ -213,11 +212,67 @@ void ellipse_T(int h,int k,int a,int b){
 // ----------------------------------------------------------------------------------------------------------------------
 
 
+void ellipse_B(int h, int k,int a, int b) {
+    int x = 0, y = b;
+
+    int a2 = a * a; // a²
+    int b2 = b * b; // b²
+
+    int S1 = b2 - (a2 * b) + (0.25 * a2);  // Condition initiale pour la première région
+    int dx = 2 * b2 * x;
+    int dy = 2 * a2 * y;
+
+    // Première région
+    while (dx < dy) {
+
+    	pixel(h + x, k + y, WHITE);  // (h+x, k+y)
+    	pixel(h - x, k + y, WHITE);  // (h-x, k+y)
+    	pixel(h + x, k - y, WHITE);  // (h+x, k-y)
+    	pixel(h - x, k - y, WHITE);  // (h-x, k-y)
+
+        if (S1 < 0) {
+            x++;
+            dx += 2 * b2;
+            S1 += dx + b2;
+        } else {
+            x++;
+            y--;
+            dx += 2 * b2;
+            dy -= 2 * a2;
+            S1 += dx - dy + b2;
+        }
+    }
+
+    // Condition initiale pour la deuxième région
+    int S2 = b2 * (x + 0.5) * (x + 0.5) + a2 * (y - 1) * (y - 1) - a2 * b2;
+
+    // Deuxième région
+    while (y >= 0) {
+
+        pixel(h + x, k + y, WHITE);  // (h+x, k+y)
+        pixel(h - x, k + y, WHITE);  // (h-x, k+y)
+        pixel(h + x, k - y, WHITE);  // (h+x, k-y)
+        pixel(h - x, k - y, WHITE);  // (h-x, k-y)
+
+        if (S2 > 0) {
+            y--;
+            dy -= 2 * a2;
+            S2 += a2 - dy;
+        } else {
+            y--;
+            x++;
+            dx += 2 * b2;
+            dy -= 2 * a2;
+            S2 += dx - dy + a2;
+        }
+    }
+}
+// ----------------------------------------------------------------------------------------------------------------------
 
 int main (){
 int choix,methode;
 int xd,yd,xf,yf;
-int h, k, r, a, b;
+int h, k, r, a, b,xc,yc;
 
 printf("Qu'est ce que vous voullez dessiner?\n");
 printf("1) Ligne \n");
@@ -261,17 +316,24 @@ else if(choix==2){
 	}
 }
 	if(choix==3){
-		if(methode==2){
-			printf("veuillez entrer les valeurs (h,k) et a b ");
+		if(methode==1) {
+			printf("veuillez entrer les valeurs (h,k) et a, b ");
 			scanf("%d %d %d %d",&h,&k,&a,&b);
 			init_graph();
-
+			repere();
+			ellipse_B(h,k,a,b);
+			getch();
+		}
+		if(methode==2){
+			printf("veuillez entrer les valeurs (h,k) et a, b ");
+			scanf("%d %d %d %d",&h,&k,&a,&b);
+			init_graph();
 			repere();
 			ellipse_P(h,k,a,b);
 			getch();
 		}
 		else if(methode==3){
-			printf("veuillez entrer les valeurs (h,k) et a b ");
+			printf("veuillez entrer les valeurs (h,k) et a, b ");
 			scanf("%d %d %d %d",&h,&k,&a,&b);
 			init_graph();
 			repere();
